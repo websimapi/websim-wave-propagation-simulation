@@ -9,6 +9,10 @@ let waveType = 'wifi';
 let isRunning = false;
 let time = 0;
 
+// Wave origin
+let waveOriginX;
+let waveOriginY;
+
 // Wave properties
 const waveProperties = {
     wifi: { speed: 150, wavelength: 50 },
@@ -33,7 +37,6 @@ function drawObstacles() {
     });
 }
 
-
 // Function to initialize the simulation
 function initializeSimulation() {
     // Reset time
@@ -50,11 +53,16 @@ function initializeSimulation() {
     });
 }
 
+function setWaveOrigin(x, y) {
+    waveOriginX = x;
+    waveOriginY = y;
+}
+
 // Function to draw the wave
 function drawWave() {
     const { speed, wavelength } = waveProperties[waveType];
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
+    // const centerX = canvas.width / 2;
+    // const centerY = canvas.height / 2;
 
     // Clear previous frame (only the wave area)
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -67,7 +75,7 @@ function drawWave() {
         const angleOffset = (time * speed + radius) / wavelength;
 
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.arc(waveOriginX, waveOriginY, radius, 0, 2 * Math.PI);
 
         // Modify alpha based on the distance from the origin and wave properties
         let alpha = Math.max(0, 1 - radius / maxRadius); // Fade out with distance
@@ -83,7 +91,6 @@ function drawWave() {
         ctx.stroke();
     }
 }
-
 
 // Animation loop
 function animate() {
@@ -103,6 +110,14 @@ startBtn.addEventListener('click', () => {
     }
 });
 
+canvas.addEventListener('click', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    setWaveOrigin(x, y);
+    drawWave(); // Redraw the wave immediately to show the new origin
+});
+
 // Initialize on load
 initializeSimulation();
-
+setWaveOrigin(canvas.width / 2, canvas.height / 2);
