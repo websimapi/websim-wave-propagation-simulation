@@ -82,9 +82,45 @@ function drawWave() {
         let x = waveOriginX + radius * Math.cos(angleOffset);
         let y = waveOriginY + radius * Math.sin(angleOffset);
 
-        // Check for obstacle collision
-        if (obstacleCollision(x, y, 1)) {
-            continue; // Skip drawing if colliding with obstacle
+        let originalX = x;
+        let originalY = y;
+
+        let collisionDetected = false;
+
+        // Raycasting for collision detection
+        for (let i = 0; i < obstacles.length; i++) {
+            const obstacle = obstacles[i];
+
+            // Simplified AABB collision check
+            if (x > obstacle.x && x < obstacle.x + obstacle.width && y > obstacle.y && y < obstacle.y + obstacle.height) {
+                collisionDetected = true;
+                break;
+            }
+
+            // Basic reflection logic
+            if (collisionDetected) {
+                let normalX = 0;
+                let normalY = 0;
+
+                // Determine the normal vector based on the obstacle's orientation
+                if (x < obstacle.x) normalX = 1; // Left side
+                else if (x > obstacle.x + obstacle.width) normalX = -1; // Right side
+                else if (y < obstacle.y) normalY = 1; // Top side
+                else if (y > obstacle.y + obstacle.height) normalY = -1; // Bottom side
+
+                // Calculate the angle of incidence
+                let incidenceAngle = Math.atan2(y - waveOriginY, x - waveOriginX);
+
+                // Calculate the angle of reflection
+                let normalAngle = Math.atan2(normalY, normalX);
+                let reflectionAngle = 2 * normalAngle - incidenceAngle;
+
+                // Calculate the reflected x and y
+                x = waveOriginX + radius * Math.cos(reflectionAngle);
+                y = waveOriginY + radius * Math.sin(reflectionAngle);
+
+                break; // Stop checking for other obstacle collision after the first is found
+            }
         }
 
         ctx.beginPath();
