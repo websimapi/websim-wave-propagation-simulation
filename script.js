@@ -15,10 +15,10 @@ let waveOriginY;
 
 // Wave properties
 const waveProperties = {
-    wifi: { speed: 150, wavelength: 50 },
-    sound: { speed: 50, wavelength: 20 },
-    am: { speed: 100, wavelength: 80 },
-    fm: { speed: 120, wavelength: 60 },
+    wifi: { speed: 150, wavelength: 50, amplitude: 1 },
+    sound: { speed: 50, wavelength: 20, amplitude: 1 },
+    am: { speed: 100, wavelength: 80, amplitude: 1 },
+    fm: { speed: 120, wavelength: 60, amplitude: 1 },
 };
 
 // Obstacles (walls) - simple rectangles
@@ -58,27 +58,40 @@ function setWaveOrigin(x, y) {
     waveOriginY = y;
 }
 
-// Function to draw the wave
-function drawWave() {
-    const { speed, wavelength } = waveProperties[waveType];
-    // const centerX = canvas.width / 2;
-    // const centerY = canvas.height / 2;
+// Function to check for obstacle collision
+function obstacleCollision(x, y, radius) {
+    for (const obstacle of obstacles) {
+        if (x + radius > obstacle.x && x - radius < obstacle.x + obstacle.width &&
+            y + radius > obstacle.y && y - radius < obstacle.y + obstacle.height) {
+            return true;
+        }
+    }
+    return false;
+}
 
-    // Clear previous frame (only the wave area)
+// Function to draw the wave with reflection and dissipation
+function drawWave() {
+    const { speed, wavelength, amplitude } = waveProperties[waveType];
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawObstacles();
 
     const maxRadius = Math.min(canvas.width, canvas.height) / 2;
 
+    for (let radius = 1; radius < maxRadius; radius += 2) {
+        let angleOffset = (time * speed + radius) / wavelength;
+        let x = waveOriginX + radius * Math.cos(angleOffset);
+        let y = waveOriginY + radius * Math.sin(angleOffset);
 
-    for (let radius = 0; radius < maxRadius; radius += 2) {
-        const angleOffset = (time * speed + radius) / wavelength;
+        // Check for obstacle collision
+        if (obstacleCollision(x, y, 1)) {
+            continue; // Skip drawing if colliding with obstacle
+        }
 
         ctx.beginPath();
         ctx.arc(waveOriginX, waveOriginY, radius, 0, 2 * Math.PI);
 
         // Modify alpha based on the distance from the origin and wave properties
-        let alpha = Math.max(0, 1 - radius / maxRadius); // Fade out with distance
+        let alpha = Math.max(0, amplitude * (1 - radius / maxRadius)); // Fade out with distance
 
         // Use a different color for each wave type
         switch (waveType) {
