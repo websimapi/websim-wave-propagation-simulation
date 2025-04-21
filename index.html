@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wave Propagation Simulation</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "simplex-noise": "https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/+esm"
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Wave Propagation Simulation</h1>
+
+    <div id="controls">
+        <label><input type="radio" name="waveType" value="wifi" checked> WiFi</label>
+        <label><input type="radio" name="waveType" value="sound"> Sound</label>
+        <label><input type="radio" name="waveType" value="am"> AM</label>
+        <label><input type="radio" name="waveType" value="fm"> FM</label>
+        <button id="startBtn">Start Simulation</button>
+    </div>
+
+    <canvas id="simulationCanvas" width="800" height="600"></canvas>
+
+    <script src="script.js" type="module"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
